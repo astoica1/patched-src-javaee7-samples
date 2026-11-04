@@ -18,7 +18,6 @@
 			<property name="jakarta.persistence.schema-generation.drop-script-source" value="META-INF/drop.sql" />
 			<property name="jakarta.persistence.sql-load-script-source"	value="META-INF/load.sql" />
 			
-			<property name="eclipselink.weaving" value="static" />
 			<property name="eclipselink.logging.level.sql" value="FINE" />
 			<property name="eclipselink.logging.parameters" value="true" />
 		</properties>

@@ -110,6 +110,10 @@ public class SecureServletWithCommonNameTest {
         // Only test TLS v1.2 for now
         System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
         
+        // Make sure the server is running (a managed server is only started by Arquillian after this method),
+        // as the set command below needs a running server
+        restartContainer();
+
         //Enable flag to allow connection through common name onlys
         List<String> cmd = new ArrayList<>();
 
