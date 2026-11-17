@@ -584,20 +584,6 @@
             </properties>
 
             <dependencies>
-                <!-- Merges with the root declaration. payara-embedded-all bundles its own Faces implementation
-                     and API, and the standalone API jar clashes with it (NoSuchMethodError at render time) -->
-                <dependency>
-                    <groupId>jakarta.platform</groupId>
-                    <artifactId>jakarta.jakartaee-api</artifactId>
-                    <scope>provided</scope>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>jakarta.faces</groupId>
-                            <artifactId>jakarta.faces-api</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-
                 <!-- Java EE based client dependencies to contact a server via WebSocket or REST -->
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
