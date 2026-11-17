@@ -5,12 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
-import java.net.Socket;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
@@ -49,13 +45,6 @@ public class ServerOperations {
 
             System.out.println("Adding user for glassfish-remote");
 
-            if ("payara-remote".equals(javaEEServer) && !isAdminPortListening()) {
-                // E.g. a managed server that Arquillian starts after this has run. asadmin can't create the user
-                // without a running server, so add it to the key file, which the server reads at startup
-                addUserToPayaraKeyFile();
-                return;
-            }
-
             List<String> cmd = new ArrayList<>();
 
             cmd.add("create-file-user");
@@ -80,48 +69,6 @@ public class ServerOperations {
         // TODO: support other servers than Payara and GlassFish
 
         // WildFly ./bin/add-user.sh -a -u u1 -p p1 -g g1
-    }
-
-    // Entry as written by "asadmin create-file-user --groups g1 u1" for password p1. It includes its own salt.
-    private static final String PAYARA_KEY_FILE_ENTRY_U1 = "u1;{SSHA256}GeKSR7Ub2ukaMCrJx/3BDyd321K6LknxwBUXGjcsCgecbni4VapZ2Q==;g1";
-
-    private static boolean isAdminPortListening() {
-        try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress("localhost", 4848), 500);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Adds the default test user directly to the file realm key file of a Payara server that isn't running yet.
-     */
-    private static void addUserToPayaraKeyFile() {
-        String gfHome = System.getProperty("payara.home");
-        if (gfHome == null) {
-            logger.info("payara.home not specified, can't add user to key file");
-            return;
-        }
-
-        String domain = System.getProperty("payara.domain", "domain1");
-        Path keyFile = Paths.get(gfHome, "glassfish", "domains", domain, "config", "keyfile");
-        if (!keyFile.toFile().exists()) {
-            logger.severe("The key file at " + keyFile.toAbsolutePath() + " does not exist. Is the domain \"" + domain + "\" correct?");
-            return;
-        }
-
-        try {
-            if (Files.readAllLines(keyFile, StandardCharsets.UTF_8).stream().anyMatch(line -> line.startsWith("u1;"))) {
-                return;
-            }
-
-            Files.write(keyFile, (PAYARA_KEY_FILE_ENTRY_U1 + System.lineSeparator()).getBytes(StandardCharsets.UTF_8),
-                        java.nio.file.StandardOpenOption.APPEND);
-            logger.info("Added user u1 to " + keyFile.toAbsolutePath());
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not add user to key file " + keyFile, e);
-        }
     }
 
     /**
@@ -392,13 +339,6 @@ public class ServerOperations {
 
             System.out.println("Setting up container JDBC identity store for " + javaEEServer);
 
-            if ("payara-remote".equals(javaEEServer) && !isAdminPortListening()) {
-                // E.g. a managed server that Arquillian starts after this has run. asadmin can't create the realm
-                // without a running server, so add it to domain.xml, which the server reads at startup
-                addJDBCDigestRealmToPayaraDomainXml();
-                return;
-            }
-
             List<String> cmd = new ArrayList<>();
 
             cmd.add("create-auth-realm");
@@ -431,59 +371,5 @@ public class ServerOperations {
         // TODO: support other servers than Payara and GlassFish
 
         // WildFly ./bin/add-user.sh -a -u u1 -p p1 -g g1
-    }
-
-    /**
-     * Adds the JDBC realm used by the digest authentication sample to the domain.xml of a Payara server that
-     * isn't running yet. Equivalent to the asadmin create-auth-realm command used for a running server.
-     */
-    private static void addJDBCDigestRealmToPayaraDomainXml() {
-        String gfHome = System.getProperty("payara.home");
-        if (gfHome == null) {
-            logger.info("payara.home not specified, can't add realm to domain.xml");
-            return;
-        }
-
-        String domain = System.getProperty("payara.domain", "domain1");
-        Path domainXml = Paths.get(gfHome, "glassfish", "domains", domain, "config", "domain.xml");
-        if (!domainXml.toFile().exists()) {
-            logger.severe("The domain.xml at " + domainXml.toAbsolutePath() + " does not exist. Is the domain \"" + domain + "\" correct?");
-            return;
-        }
-
-        try {
-            String xml = new String(Files.readAllBytes(domainXml), StandardCharsets.UTF_8);
-            if (xml.contains("name=\"eesamplesdigestrealm\"")) {
-                return;
-            }
-
-            int config = xml.indexOf("<config name=\"server-config\">");
-            int securityService = config < 0 ? -1 : xml.indexOf("<security-service>", config);
-            if (securityService < 0) {
-                logger.severe("Could not find the security-service of server-config in " + domainXml.toAbsolutePath());
-                return;
-            }
-
-            int insertAt = securityService + "<security-service>".length();
-            String realm =
-                System.lineSeparator() +
-                "        <auth-realm classname=\"com.sun.enterprise.security.auth.realm.jdbc.JDBCRealm\" name=\"eesamplesdigestrealm\">" + System.lineSeparator() +
-                "          <property name=\"jaas-context\" value=\"jdbcDigestRealm\"></property>" + System.lineSeparator() +
-                "          <property name=\"encoding\" value=\"HASHED\"></property>" + System.lineSeparator() +
-                "          <property name=\"password-column\" value=\"password\"></property>" + System.lineSeparator() +
-                "          <property name=\"datasource-jndi\" value=\"java:comp/DefaultDataSource\"></property>" + System.lineSeparator() +
-                "          <property name=\"group-table\" value=\"grouptable\"></property>" + System.lineSeparator() +
-                "          <property name=\"charset\" value=\"UTF-8\"></property>" + System.lineSeparator() +
-                "          <property name=\"user-table\" value=\"usertable\"></property>" + System.lineSeparator() +
-                "          <property name=\"group-name-column\" value=\"groupname\"></property>" + System.lineSeparator() +
-                "          <property name=\"digest-algorithm\" value=\"None\"></property>" + System.lineSeparator() +
-                "          <property name=\"user-name-column\" value=\"username\"></property>" + System.lineSeparator() +
-                "        </auth-realm>";
-
-            Files.write(domainXml, (xml.substring(0, insertAt) + realm + xml.substring(insertAt)).getBytes(StandardCharsets.UTF_8));
-            logger.info("Added realm eesamplesdigestrealm to " + domainXml.toAbsolutePath());
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not add realm to " + domainXml, e);
-        }
     }
 }
