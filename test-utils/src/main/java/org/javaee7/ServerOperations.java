@@ -98,9 +98,9 @@ public class ServerOperations {
      * Adds the default test user directly to the file realm key file of a Payara server that isn't running yet.
      */
     private static void addUserToPayaraKeyFile() {
-        String gfHome = System.getProperty("com.sun.aas.productRoot");
+        String gfHome = System.getProperty("payara.home");
         if (gfHome == null) {
-            logger.info("com.sun.aas.productRoot not specified, can't add user to key file");
+            logger.info("payara.home not specified, can't add user to key file");
             return;
         }
 
@@ -150,20 +150,20 @@ public class ServerOperations {
 
         if ("glassfish-remote".equals(javaEEServer) || "payara-remote".equals(javaEEServer)) {
 
-            String gfHome = System.getProperty("com.sun.aas.productRoot");
+            String gfHome = System.getProperty("payara.home");
             if (gfHome == null) {
-                logger.info("glassfishRemote_gfHome not specified");
+                logger.info("payara.home not specified");
                 return;
             }
 
             Path gfHomePath = Paths.get(gfHome);
             if (!gfHomePath.toFile().exists()) {
-                logger.severe("glassfishRemote_gfHome at " + gfHome + " does not exists");
+                logger.severe("payara.home at " + gfHome + " does not exists");
                 return;
             }
 
             if (!gfHomePath.toFile().isDirectory()) {
-                logger.severe("glassfishRemote_gfHome at " + gfHome + " is not a directory");
+                logger.severe("payara.home at " + gfHome + " is not a directory");
                 return;
             }
 
@@ -438,9 +438,9 @@ public class ServerOperations {
      * isn't running yet. Equivalent to the asadmin create-auth-realm command used for a running server.
      */
     private static void addJDBCDigestRealmToPayaraDomainXml() {
-        String gfHome = System.getProperty("com.sun.aas.productRoot");
+        String gfHome = System.getProperty("payara.home");
         if (gfHome == null) {
-            logger.info("com.sun.aas.productRoot not specified, can't add realm to domain.xml");
+            logger.info("payara.home not specified, can't add realm to domain.xml");
             return;
         }
 

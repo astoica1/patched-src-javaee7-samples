@@ -462,8 +462,6 @@
                         <configuration>
                             <systemPropertyVariables>
                                 <payara.home>${session.executionRootDirectory}/target/payara7</payara.home>
-                                <!-- Used by test-utils (CliCommands/ServerOperations) to locate asadmin, e.g. to create the u1 test user -->
-                                <com.sun.aas.productRoot>${session.executionRootDirectory}/target/payara7</com.sun.aas.productRoot>
                                 <arquillian.launch>payara7</arquillian.launch>
                                 <payara_domain>${payara_domain}</payara_domain>
                                 <javaEEServer>payara-remote</javaEEServer>
