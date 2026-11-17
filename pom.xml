@@ -53,7 +53,7 @@
             (these are downloaded and installed in these versions by Maven for the CI profiles)
          -->
         <payara.version>7.2026.9</payara.version>
-        <payara_domain>domain1</payara_domain>
+        <payara.domain>domain1</payara.domain>
         <glassfish.client.version>5.0</glassfish.client.version> <!-- For remote EJB for Payara and Glassfish -->
         <glassfish.version>4.1.1</glassfish.version>
         <liberty.version>16.0.0.4</liberty.version>
@@ -463,7 +463,7 @@
                             <systemPropertyVariables>
                                 <payara.home>${session.executionRootDirectory}/target/payara7</payara.home>
                                 <arquillian.launch>payara7</arquillian.launch>
-                                <payara_domain>${payara_domain}</payara_domain>
+                                <payara.domain>${payara.domain}</payara.domain>
                                 <javaEEServer>payara-remote</javaEEServer>
                             </systemPropertyVariables>
                         </configuration>
@@ -726,7 +726,7 @@
                         <configuration>
                             <systemPropertyVariables>
                                 <javaEEServer>payara-remote</javaEEServer>
-                                <payara_domain>${payara_domain}</payara_domain>
+                                <payara.domain>${payara.domain}</payara.domain>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

@@ -104,7 +104,7 @@ public class ServerOperations {
             return;
         }
 
-        String domain = System.getProperty("payara_domain", "domain1");
+        String domain = System.getProperty("payara.domain", "domain1");
         Path keyFile = Paths.get(gfHome, "glassfish", "domains", domain, "config", "keyfile");
         if (!keyFile.toFile().exists()) {
             logger.severe("The key file at " + keyFile.toAbsolutePath() + " does not exist. Is the domain \"" + domain + "\" correct?");
@@ -167,10 +167,10 @@ public class ServerOperations {
                 return;
             }
 
-            String domain = System.getProperty("payara_domain");
+            String domain = System.getProperty("payara.domain");
             if (domain == null) {
                 domain = getPayaraDomainFromServer();
-                logger.info("Using domain \"" + domain + "\" obtained from server. If this is not correct use -Dpayara_domain to override.");
+                logger.info("Using domain \"" + domain + "\" obtained from server. If this is not correct use -Dpayara.domain to override.");
             }
 
             Path cacertsPath = gfHomePath.resolve("glassfish/domains/" + domain + "/config/cacerts.p12");
@@ -269,7 +269,7 @@ public class ServerOperations {
         }
 
         if (domain == null) {
-            throw new IllegalStateException("Running domain could not be obtained for target Payara. Please specify explicitly using -Dpayara_domain");
+            throw new IllegalStateException("Running domain could not be obtained for target Payara. Please specify explicitly using -Dpayara.domain");
         }
 
         return domain;
@@ -317,7 +317,7 @@ public class ServerOperations {
 
             String restartDomain = domain;
             if (restartDomain == null) {
-                restartDomain = System.getProperty("payara_domain");
+                restartDomain = System.getProperty("payara.domain");
             }
 
             if (restartDomain == null) {
@@ -444,7 +444,7 @@ public class ServerOperations {
             return;
         }
 
-        String domain = System.getProperty("payara_domain", "domain1");
+        String domain = System.getProperty("payara.domain", "domain1");
         Path domainXml = Paths.get(gfHome, "glassfish", "domains", domain, "config", "domain.xml");
         if (!domainXml.toFile().exists()) {
             logger.severe("The domain.xml at " + domainXml.toAbsolutePath() + " does not exist. Is the domain \"" + domain + "\" correct?");
