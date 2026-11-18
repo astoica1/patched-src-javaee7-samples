@@ -662,8 +662,6 @@
                 <skipServletClientCertificate>true</skipServletClientCertificate>
                 <!-- Fresh JVM per test class, as some samples share static state (e.g. batch/scheduling latches) -->
                 <reuseForks>false</reuseForks>
-                <!-- The embedded container doesn't apply an ear's context-root to @ArquillianResource URL -->
-                <skipEAR>true</skipEAR>
                 <!-- The embedded server runs in the test JVM, so it needs these packages opened.
                      otel.sdk.disabled=false creates the runtime OpenTelemetry SDK; without it, Payara's managed executors
                      throw "No application code is executing" when the in-JVM Tyrus client schedules its idle timeout,
