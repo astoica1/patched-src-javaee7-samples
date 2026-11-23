@@ -23,6 +23,10 @@
         <!-- Set to ${skipTests} by modules that need the test user and realm in the payara-server-managed domain -->
         <skipPayaraDomainSetup>true</skipPayaraDomainSetup>
 
+        <!-- Payara artifacts resolved by the payara-server-managed and payara-server-embedded profiles; the web profile switches them to the Web Profile variants -->
+        <payara.artifact>payara</payara.artifact>
+        <payara.embedded.artifact>payara-embedded-all</payara.embedded.artifact>
+
         <!-- Module Skip Properties -->
         <skipBatch>${skipTests}</skipBatch>
         <skipCDI>${skipTests}</skipCDI>
@@ -507,6 +511,17 @@
 
 
     <profiles>
+        <!-- Resolve the Payara Web Profile artifacts (payara-web, payara-embedded-web) instead of the full ones.
+             Combine with a server profile, e.g. -Pweb,payara-server-managed or -Pweb,payara-server-embedded.
+             Note that explicitly activating any profile deactivates the activeByDefault payara-server-managed profile -->
+        <profile>
+            <id>web</id>
+            <properties>
+                <payara.artifact>payara-web</payara.artifact>
+                <payara.embedded.artifact>payara-embedded-web</payara.embedded.artifact>
+            </properties>
+        </profile>
+
         <profile>
             <id>payara-server-managed</id>
 
@@ -551,7 +566,7 @@
                                     <artifactItems>
                                         <artifactItem>
                                             <groupId>fish.payara.distributions</groupId>
-                                            <artifactId>payara</artifactId>
+                                            <artifactId>${payara.artifact}</artifactId>
                                             <version>${payara.version}</version>
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
@@ -789,7 +804,7 @@
 
                 <dependency>
                     <groupId>fish.payara.extras</groupId>
-                    <artifactId>payara-embedded-all</artifactId>
+                    <artifactId>${payara.embedded.artifact}</artifactId>
                     <version>${payara.version}</version>
                     <scope>provided</scope>
                     <optional>true</optional>
