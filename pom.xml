@@ -55,7 +55,7 @@
             Application Server versions
             (these are downloaded and installed in these versions by Maven for the CI profiles)
          -->
-        <payara.version>5.93.0</payara.version>
+        <payara.version>5.2022.5</payara.version>
         <payara.domain>domain1</payara.domain>
         <glassfish.client.version>5.0</glassfish.client.version> <!-- For remote EJB for Payara and Glassfish -->
         <glassfish.version>4.1.1</glassfish.version>
